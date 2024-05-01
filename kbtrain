@@ -86,6 +86,7 @@ def main(stdscr):
             user_input.append(char)
 
         wordcount += 1
+        stdscr.get_wch()
         stdscr.refresh()
 
 if __name__ == "__main__":
