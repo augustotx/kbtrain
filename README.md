@@ -2,7 +2,9 @@
 ### A basic, minimalistic terminal-based keyboard practice tool.
 ## How to run
 You need python and ncurses installed on your system.
+
 To run it you can go into the repository's folder and run `./kbtrain`
+
 To install it you can run `sudo mv kbtrain /bin/kbtrain` so you can use it anywhere on your system
 
 ## How to use
