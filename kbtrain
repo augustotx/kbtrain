@@ -2,10 +2,19 @@
 import curses
 import random
 import time
+import sys
 
-def generate_random_string(length):
-    alphabet = "ç"
-    return ''.join(random.choice(alphabet) for _ in range(length))
+def load_words(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            words = [line.strip() for line in file if line.strip()]
+            print(words)
+        return words
+    except FileNotFoundError:
+        return ["the","be","of","and","a","to","in","he","have","it","that","for","they","I","with","as","not","on","she","at","by","this","we","you","do","but","from","or","which","one","would","all","will","there","say","who","make","when","can","more","if","no","man","out","other","so","what","time","up","go","about","than","into","could","state","only","new","year","some","take","come","these","know","see","use","get","like","then","first","any","work","now","may","such","give","over","think","most","even","find","day","also","after","way","many","must","look","before","great","back","through","long","where","much","should","well","people","down","own","just","because","good","each","those","feel","seem","how","high","too","place","little","world","very","still","nation","hand","old","life","tell","write","become","here","show","house","both","between","need","mean","call","develop","under","last","right","move","thing","general","school","never","same","another","begin","while","number","part","turn","real","leave","might","want","point","form","off","child","few","small","since","against","ask","late","home","interest","large","person","end","open","public","follow","during","present","without","again","hold","govern","around","possible","head","consider","word","program","problem","however","lead","system","set","order","eye","plan","run","keep","face","fact","group","play","stand","increase","early","course","change","help","line"]
+
+def choose_word(words):
+    return random.choice(words)
 
 def main(stdscr):
     curses.start_color()
@@ -17,6 +26,13 @@ def main(stdscr):
     stdscr.nodelay(False)  # Make getch blocking
     stdscr.keypad(True)  # Enable keypad mode
 
+    # Check if filename is provided
+    if len(sys.argv) < 2:
+        sys.argv = ["",""]
+
+    # Load words from the specified file
+    words = load_words(sys.argv[1])
+
     starttime = time.time()
     wordcount = 0
     totalcorrect = 0
@@ -25,8 +41,7 @@ def main(stdscr):
     random.seed(time.time())
 
     while True:
-        word_length = random.randint(5, 10)
-        chosen_word = generate_random_string(word_length)
+        chosen_word = choose_word(words)
         maxy, maxx = stdscr.getmaxyx()
         x_start = (maxx - len(chosen_word)) // 2
         y_start = maxy // 2
@@ -35,7 +50,6 @@ def main(stdscr):
         stdscr.addstr(y_start, x_start, chosen_word)
         stdscr.refresh()
 
-        correct = True
         user_input = []
 
         for i in range(len(chosen_word)):
@@ -57,9 +71,13 @@ def main(stdscr):
                 stdscr.refresh()
 
                 return  # Exit the program
-            char = ch
-            if char != chosen_word[i]:
-                correct = False
+            char = ' '
+            alphacheck = str(ch).isalpha()
+            if alphacheck:
+                char = ch
+            if char != chosen_word[i] or not alphacheck:
+                if char == ' ':
+                    char = 'x'
                 totalincorrect += 1
                 stdscr.addstr(y_start, x_start + i, char, curses.color_pair(1))
             else:
@@ -70,7 +88,6 @@ def main(stdscr):
 
         wordcount += 1
         stdscr.refresh()
-
 
 if __name__ == "__main__":
     curses.wrapper(main)
