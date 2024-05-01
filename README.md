@@ -1,9 +1,10 @@
 # kbtrain
 ### A basic, minimalistic terminal-based keyboard practice tool.
-## How to build
-You need `gcc` installed and a terminal compatible with [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code). Both usually come with most GNU/Linux distributions.
+## How to run
+You need python and ncurses installed on your system.
+To run it you can go into the repository's folder and run `./kbtrain`
+To install it you can run `sudo mv kbtrain /bin/kbtrain` so you can use it anywhere on your system
 
-In the cloned repository's root run `gcc main.c -o kbtrain` and you'll have kbtrain ready to use. You can run it with `./kbtrain` or "install" it by moving it to the `/bin` folder with `sudo cp kbtrain /bin/` so you can run it anywhere.
 ## How to use
 Run it and start typing.
 

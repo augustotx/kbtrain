@@ -1,0 +1,76 @@
+#!/bin/python
+import curses
+import random
+import time
+
+def generate_random_string(length):
+    alphabet = "ç"
+    return ''.join(random.choice(alphabet) for _ in range(length))
+
+def main(stdscr):
+    curses.start_color()
+    curses.use_default_colors()
+    curses.init_pair(1, curses.COLOR_RED, -1)
+    curses.init_pair(2, curses.COLOR_GREEN, -1)
+    
+    curses.curs_set(0)  # Hide cursor
+    stdscr.nodelay(False)  # Make getch blocking
+    stdscr.keypad(True)  # Enable keypad mode
+
+    starttime = time.time()
+    wordcount = 0
+    totalcorrect = 0
+    totalincorrect = 0
+
+    random.seed(time.time())
+
+    while True:
+        word_length = random.randint(5, 10)
+        chosen_word = generate_random_string(word_length)
+        maxy, maxx = stdscr.getmaxyx()
+        x_start = (maxx - len(chosen_word)) // 2
+        y_start = maxy // 2
+
+        stdscr.clear()
+        stdscr.addstr(y_start, x_start, chosen_word)
+        stdscr.refresh()
+
+        correct = True
+        user_input = []
+
+        for i in range(len(chosen_word)):
+            ch = stdscr.get_wch()
+            if ch == '0':
+                exittime = time.time()
+                totaltime = exittime - starttime
+                accuracy = totalcorrect / (totalcorrect + totalincorrect) * 100 if (totalcorrect + totalincorrect) > 0 else 0
+                wpm = wordcount / (totaltime / 60)
+                stdscr.clear()
+                x_start = (maxx - 22)//2
+                stdscr.addstr(y_start - 2, x_start, "Exiting.")
+                stdscr.addstr(y_start - 1, x_start, f"Total correct: {accuracy:.2f}%")
+                stdscr.addstr(y_start, x_start, f"Words per minute: {wpm:.2f}")
+                stdscr.addstr(y_start + 1, x_start, f"Test time: {int(totaltime)}s")
+                stdscr.addstr(y_start + 2, x_start, f"Completed words: {wordcount}")
+                stdscr.addstr(y_start + 3, x_start, f"Press any key to exit.")
+                stdscr.getch()
+                stdscr.refresh()
+
+                return  # Exit the program
+            char = ch
+            if char != chosen_word[i]:
+                correct = False
+                totalincorrect += 1
+                stdscr.addstr(y_start, x_start + i, char, curses.color_pair(1))
+            else:
+                totalcorrect += 1
+                stdscr.addstr(y_start, x_start + i, char, curses.color_pair(2))
+            stdscr.refresh()
+            user_input.append(char)
+
+        wordcount += 1
+        stdscr.refresh()
+
+
+if __name__ == "__main__":
+    curses.wrapper(main)
